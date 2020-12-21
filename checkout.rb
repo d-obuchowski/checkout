@@ -5,6 +5,7 @@ class Checkout
   SCARF_REGULAR_PRICE = BigDecimal("9.25")
   SCARF_PROMOTION_PRICE = BigDecimal("8.50")
   SCARF_CODE = "001"
+  PRODUCT_PROMOTIONAL_RULES = ["purchasing_red_scarf"]
 
   def initialize(promotional_rules)
     @total_price = BigDecimal(0)
@@ -18,7 +19,7 @@ class Checkout
   end
 
   def total
-    "%.2f" % calculate_total_price_promotions_entire_shopping_cart
+    "%.2f" % total_price_with_promotions_for_entire_cart
   end
 
   private
@@ -27,7 +28,8 @@ class Checkout
 
   def set_price(item)
     if item.product_code == SCARF_CODE && scarf_promotion_detected?
-      # when we have two scarves, we should run promotion for second scarf and first scarf
+      # if we calculate promotion for the second scarf, we also should calculate promotion for first scarf
+      # we added first scarf for regular price, but we should calculate scarf price by promotion
       scarf_items_size == 2 ? SCARF_PROMOTION_PRICE - (SCARF_REGULAR_PRICE - SCARF_PROMOTION_PRICE) : SCARF_PROMOTION_PRICE
     else
       BigDecimal(item.price)
@@ -38,7 +40,7 @@ class Checkout
     scarf_items_size >= 2 && promotional_rules.include?("purchasing_red_scarf")
   end
 
-  def calculate_total_price_promotions_entire_shopping_cart
+  def total_price_with_promotions_for_entire_cart
     total_price_with_promotions = @total_price
 
     promotions_for_entire_shopping_cart.each do |prom|
@@ -49,7 +51,7 @@ class Checkout
   end
 
   def promotions_for_entire_shopping_cart
-    @promotions_for_entire_shopping_cart ||= promotional_rules.reject { |rule| rule.include?("purchasing_red_scarf") }
+    @promotions_for_entire_shopping_cart ||= promotional_rules.reject { |rule| PRODUCT_PROMOTIONAL_RULES.include?(rule) }
   end
 
   def calculate_reduced_price_spending_over_60_prom(total_price_with_promotions)
