@@ -24,35 +24,29 @@ class Checkout
   end
 
   def calculate_total_price_with_promotions
-    total_price_with_promotions = @total_price
+    @total_price_with_promotions = @total_price
 
     promotional_rules.each do |prom|
-      case prom
-      when "spending_over_$60"
-        total_price_with_promotions-= calculate_reduced_price_over_60_promo(total_price_with_promotions)
-      when "purchasing_red_scarf"
-        total_price_with_promotions-= calculate_reduced_price_red_scarf_promo(total_price_with_promotions)
-      end
+      @total_price_with_promotions-= self.send("calculate_reduced_price_#{prom}_prom")
     end
 
-    total_price_with_promotions
+    @total_price_with_promotions
   end
 
-  def calculate_reduced_price_red_scarf_promo(total_price_with_promotions)
+  def calculate_reduced_price_spending_over_60_prom
+    return 0 unless @total_price_with_promotions > 60
+
+    @total_price_with_promotions * BigDecimal("0.10")
+  end
+
+  def calculate_reduced_price_purchasing_red_scarf_prom
     return 0 unless scarf_items_size >= 2
 
     scarf_items_size * BigDecimal(scarf_regular_price - scarf_promotion_price)
   end
 
-  def calculate_reduced_price_over_60_promo(total_price_with_promotions)
-    return 0 unless total_price_with_promotions > 60
-
-    total_price_with_promotions * BigDecimal("0.10")
-  end
-
   def scarf_regular_price
-    scarf_price = @items.find { |item| item.product_code == "001" }.price
-    BigDecimal(scarf_price)
+    BigDecimal("9.25")
   end
 
   def scarf_promotion_price
@@ -63,4 +57,3 @@ class Checkout
     @items.count { |item| item.product_code == "001" }
   end
 end
-

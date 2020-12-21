@@ -25,8 +25,8 @@ describe 'Checkout' do
       end
     end
 
-    context 'when "spending_over_$60" promo passed' do
-      let(:promo_rules) { ['spending_over_$60'] }
+    context 'when "spending_over_60" promo passed' do
+      let(:promo_rules) { ['spending_over_60'] }
 
       context 'when 2 red scarfs, 1 silver cufflinks and 1 silk dress added to cart' do
         before do
@@ -82,7 +82,7 @@ describe 'Checkout' do
     end
 
     context 'when "over_60" and "2red_scards" promo passed' do
-      let(:promo_rules) { %w[purchasing_red_scarf spending_over_$60] }
+      let(:promo_rules) { %w[purchasing_red_scarf spending_over_60] }
 
       context 'when 2 red scarfs, 1 silver cufflinks and 1 silk dress added to cart' do
         before do
