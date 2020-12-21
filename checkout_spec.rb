@@ -81,8 +81,25 @@ describe 'Checkout' do
       end
     end
 
-    context 'when "over_60" and "2red_scards" promo passed' do
+    context 'when "purchasing_red_scarf" and "spending_over_60" promo passed' do
       let(:promo_rules) { %w[purchasing_red_scarf spending_over_60] }
+
+      context 'when 2 red scarfs, 1 silver cufflinks and 1 silk dress added to cart' do
+        before do
+          checkout.scan(red_scarf)
+          checkout.scan(silver_cufflinks)
+          checkout.scan(red_scarf)
+          checkout.scan(silk_dress)
+        end
+
+        it 'should decrease price by 8.50 and use 10% discount' do
+          expect(price).to eq("73.76")
+        end
+      end
+    end
+
+    context 'when "spending_over_60" and "purchasing_red_scarf" promo passed' do
+      let(:promo_rules) { %w[spending_over_60  purchasing_red_scarf] }
 
       context 'when 2 red scarfs, 1 silver cufflinks and 1 silk dress added to cart' do
         before do
@@ -99,4 +116,3 @@ describe 'Checkout' do
     end
   end
 end
-
